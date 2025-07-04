@@ -1,0 +1,65 @@
+#login-section{
+    padding: 20px;
+    min-height:100vh;
+    background-color: rgb(44, 44, 44);
+}
+
+#login-section h1 {
+    color: white;
+    font-size: 30px;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+#login-section p {
+    color: gainsboro;
+    font-size: 18px;
+}
+
+#login-section form {
+    padding: 30px;
+    border-radius: 10px;
+    width: 40%;
+    margin: auto;
+}
+
+#login-section form *{
+    display: block;
+    width: 100%;
+}
+
+#login-section form label{
+    font-weight: bold;
+    color: white;
+    padding: 5px 0;
+}
+
+#login-section form textarea,
+#login-section form input{
+    background-color: rgb(44, 44, 44);
+    color: white;
+    padding: 5px;
+    margin-top: 5px;
+    border-radius: 10px;
+    border: none;
+    border: 2px solid #8d8d8d;
+}
+#login-section form button{
+    margin-top: 20px;
+    border-radius: 5px;
+    font-weight: bold;
+    border: none;
+    padding: 8px 15px;
+    background-color: #a139c0;
+    color: rgb(233, 233, 233);
+    cursor: pointer;
+}
+#login-section form button:hover{
+    background-color: #bb5dd8;
+    color: #f1f1f1;
+}
+
+
+
+
+
