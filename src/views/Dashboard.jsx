@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import Layout from "../components/Layout/Layout";
 import "../styles/Dashboard.css";
+import { db } from "../config/firebase";
+import { collection, addDoc } from "firebase/firestore";
 
 
 const Dashboard = () => {
@@ -8,6 +10,20 @@ const Dashboard = () => {
     const [price, setPrice] = useState("");
     const [description, setDescription] = useState("");
     const [error, setError] = useState("");
+    const [products, setProducts] = useState(JSON.parse(localStorage.getItem("product"))||[]);
+
+    const productsRef = collection(db, "products");
+
+    const createProduct = async (newProduct) => {
+        try {
+            const productRef = await addDoc(productsRef, newProduct);
+            console.log("Producto agregado con ID:", productRef.id);
+            return productRef
+        }catch (error) {
+            console.error("Error al agregar el producto:", error);
+            setError("Error al agregar el producto");
+            }
+        }
 
     const handleName = (event) => {
         setName(event.target.value);
@@ -19,7 +35,7 @@ const Dashboard = () => {
         setDescription(event.target.value);
     }
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         setError("");
 
@@ -39,8 +55,10 @@ const Dashboard = () => {
         }
 
 
-        const newProduct = {name,price, description};  
+        const newProduct = {name, price, description};  
+        
         console.log("Producto agregado:", newProduct);
+        await createProduct(newProduct);
 
         setName("");
         setPrice("");
@@ -82,4 +100,4 @@ const Dashboard = () => {
         </Layout> 
     );
 }
-export default Dashboard;
+export default Dashboard

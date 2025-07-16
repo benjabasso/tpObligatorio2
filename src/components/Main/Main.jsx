@@ -1,22 +1,35 @@
 import { useEffect } from "react";
 import "./Main.css";
 import { useState } from "react";
+import { db } from "../../config/firebase";
+import { collection, getDocs } from "firebase/firestore";
+
 
 const Main = () => {
     const [products, setProducts] = useState([])
     const [error, setError] = useState(null)
     
+    //Simulacion de usuario conectado
+    const [user, setUser] = useState(true)
 
     const fetchingProducts = async () => {
-    try {
+    /*try {
         const respuesta = await fetch("https://fakestoreapi.com/products")
         const data = await respuesta.json();
         setProducts(data);
-    } catch (error) 
-        {
+    } 
+    catch (error){
             console.error("Error fetching products:", error);
             setError("No se pudieron cargar los productos");
-        }
+        }*/
+
+
+        const productsRef = collection(db, "products");
+
+        const snapshot = await getDocs(productsRef)
+        const docs = snapshot.docs.map((doc) => doc.data())
+        setProducts(docs)
+
     }
 
     useEffect(() => {
@@ -42,10 +55,15 @@ const Main = () => {
                     console.log(producto, "producto n°", index + 1);
                     return (
                         <div className="product">
-                            <img src={producto.image} alt={producto.title} />
-                            <h3>{producto.title}</h3>
+                            <h3>{producto.name}</h3>
                             <p>{producto.description}</p>
                             <span>${producto.price}</span>
+                            {user && 
+                            <div className="user-buttons">
+                                <button>Actualizar</button>
+                                <button>Eliminar</button>
+                            </div>
+                            }
                             <button>Añadir al carrito</button>
                         </div>
 

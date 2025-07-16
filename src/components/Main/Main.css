@@ -1,0 +1,10 @@
+.product{
+    border-radius: 0.5rem;
+}
+.user-buttons button {
+    display: flex;
+    justify-content: center;
+    margin-top: 1rem;
+    background-color: aqua;
+    color: black;
+}
