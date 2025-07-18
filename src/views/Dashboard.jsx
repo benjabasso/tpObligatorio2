@@ -3,6 +3,7 @@ import Layout from "../components/Layout/Layout";
 import "../styles/Dashboard.css";
 import { db } from "../config/firebase";
 import { collection, addDoc } from "firebase/firestore";
+import { useNavigate } from "react-router-dom";
 
 
 const Dashboard = () => {
@@ -10,13 +11,18 @@ const Dashboard = () => {
     const [price, setPrice] = useState("");
     const [description, setDescription] = useState("");
     const [error, setError] = useState("");
-    const [products, setProducts] = useState(JSON.parse(localStorage.getItem("product"))||[]);
+    const [message, setMessage] = useState("");
+
+    const navigate = useNavigate();
+
 
     const productsRef = collection(db, "products");
 
     const createProduct = async (newProduct) => {
+        const createAt = Date.now();
+        const updatedAt = Date.now();
         try {
-            const productRef = await addDoc(productsRef, newProduct);
+            const productRef = await addDoc(productsRef,{createAt, updatedAt, ...newProduct});
             console.log("Producto agregado con ID:", productRef.id);
             return productRef
         }catch (error) {
@@ -59,12 +65,24 @@ const Dashboard = () => {
         
         console.log("Producto agregado:", newProduct);
         await createProduct(newProduct);
+        try {
+            await createProduct(newProduct);
+            setMessage("Producto agregado exitosamente, redirigiendo...");
 
         setName("");
         setPrice("");
         setDescription("");
         setError("");
-        alert("Producto agregado exitosamente");
+        setTimeout(() => {
+            setMessage("");
+            navigate("/");
+        }, 3000);
+
+        } catch (error) {
+            console.error("Error al agregar el producto:", error);
+            setError("Error al agregar el producto");
+        }
+
     }
 
     useEffect(() => {
@@ -94,6 +112,7 @@ const Dashboard = () => {
                 <button>Agregar Producto</button>
             
             {error && <p style={{color: "red"}}>{error}</p>}
+            {message && <p style={{color:"green"}}>{message}</p>}
             </form>
         </section>
 

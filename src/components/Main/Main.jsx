@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import "./Main.css";
 import { useState } from "react";
 import { db } from "../../config/firebase";
-import { collection, getDocs } from "firebase/firestore";
+import { collection, deleteDoc, getDocs, doc } from "firebase/firestore";
 
 
 const Main = () => {
@@ -13,21 +13,11 @@ const Main = () => {
     const [user, setUser] = useState(true)
 
     const fetchingProducts = async () => {
-    /*try {
-        const respuesta = await fetch("https://fakestoreapi.com/products")
-        const data = await respuesta.json();
-        setProducts(data);
-    } 
-    catch (error){
-            console.error("Error fetching products:", error);
-            setError("No se pudieron cargar los productos");
-        }*/
-
 
         const productsRef = collection(db, "products");
 
         const snapshot = await getDocs(productsRef)
-        const docs = snapshot.docs.map((doc) => doc.data())
+        const docs = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data()}))
         setProducts(docs)
 
     }
@@ -36,6 +26,18 @@ const Main = () => {
         fetchingProducts();
     }, [])
 
+    const handleDeleteProduct = async (id) => {
+        try {
+            if (confirm("¿Estás seguro de que quieres eliminar este producto?")) {
+            await deleteDoc(doc(db, "products", id));
+            setProducts(products.filter(p => p.id !== id));
+            console.log("Producto eliminado con ID:", id);}}
+        catch (error) {
+            console.error("Error al eliminar el producto:", error);
+            setError("No se pudo eliminar el producto");
+        }
+
+    }
 
     return (
         <main>
@@ -61,7 +63,7 @@ const Main = () => {
                             {user && 
                             <div className="user-buttons">
                                 <button>Actualizar</button>
-                                <button>Eliminar</button>
+                                <button onClick={() => handleDeleteProduct(producto.id)}>Eliminar</button>
                             </div>
                             }
                             <button>Añadir al carrito</button>

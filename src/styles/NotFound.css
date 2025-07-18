@@ -1,0 +1,12 @@
+.not-found {
+    text-align: center;
+    color: rgb(131, 131, 131);
+    font-size: larger;
+    background-color: rgb(44, 44, 44);
+    height: 100vh;
+    padding: 8rem;
+}
+
+.not-found h1,h2 {
+    font-size: 60px;
+}
