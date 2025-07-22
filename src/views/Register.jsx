@@ -86,7 +86,7 @@ const Register = () => {
             </form>
 
             {error && <p className="error" style={{ color: "red", textAlign: "center"}}>{error}</p>}
-
+            
         </section>
         </Layout>       
     );

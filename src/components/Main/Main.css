@@ -8,3 +8,9 @@
     background-color: aqua;
     color: black;
 }
+
+.user-buttons a {
+    text-decoration: none;
+    color: black;
+    font-weight: bold;
+}

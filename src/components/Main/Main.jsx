@@ -3,7 +3,7 @@ import "./Main.css";
 import { useState } from "react";
 import { db } from "../../config/firebase";
 import { collection, deleteDoc, getDocs, doc } from "firebase/firestore";
-
+import { Link } from "react-router-dom";
 
 const Main = () => {
     const [products, setProducts] = useState([])
@@ -51,7 +51,6 @@ const Main = () => {
             {
                 products.length === 0 && <h2>No hay productos disponibles</h2>
             }
-
             {
                 products.map((producto, index)=> {
                     console.log(producto, "producto n°", index + 1);
@@ -60,17 +59,18 @@ const Main = () => {
                             <h3>{producto.name}</h3>
                             <p>{producto.description}</p>
                             <span>${producto.price}</span>
-                            {user && 
+                            <p>Producto creado: {new Date(producto.createAt).toLocaleString()}</p>
+                            {user &&                          
                             <div className="user-buttons">
-                                <button>Actualizar</button>
+                                <button><Link to={`/editar-producto/${producto.id}`}>Editar Producto</Link></button>
                                 <button onClick={() => handleDeleteProduct(producto.id)}>Eliminar</button>
+
                             </div>
                             }
                             <button>Añadir al carrito</button>
                         </div>
 
                     )
-
                 })
             }
             </section>     

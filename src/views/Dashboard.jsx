@@ -44,6 +44,7 @@ const Dashboard = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError("");
+        
 
         if (!name || !price || !description) {
             setError("Todos los campos son obligatorios");
@@ -61,27 +62,7 @@ const Dashboard = () => {
         }
 
 
-        const newProduct = {name, price, description};  
-        
-        console.log("Producto agregado:", newProduct);
-        await createProduct(newProduct);
-        try {
-            await createProduct(newProduct);
-            setMessage("Producto agregado exitosamente, redirigiendo...");
-
-        setName("");
-        setPrice("");
-        setDescription("");
-        setError("");
-        setTimeout(() => {
-            setMessage("");
-            navigate("/");
-        }, 3000);
-
-        } catch (error) {
-            console.error("Error al agregar el producto:", error);
-            setError("Error al agregar el producto");
-        }
+        console.log("Producto editado:", {name, price, description});
 
     }
 
