@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import React, { use, useState, useEffect} from 'react';
 import { collection, addDoc } from "firebase/firestore";
 import Layout from '../components/Layout/Layout';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { db } from '../config/firebase';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Navigate } from 'react-router-dom';
+import { doc, getDoc, updateDoc } from "firebase/firestore";
+
 
 
 const EditProduct = () => {
@@ -13,6 +15,30 @@ const [price, setPrice] = useState("");
 const [description, setDescription] = useState("");
 const [error, setError] = useState("");
 const [message, setMessage] = useState("");
+const navigate = useNavigate();
+const { id } = useParams();
+
+//Traer producto de la base de datos
+const fetchProduct = async (id) => {
+    try {
+        const docRef = doc(db, "products", id);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+            const productData = docSnap.data();
+            setName(productData.name);
+            setPrice(productData.price);
+            setDescription(productData.description);
+        }
+    } catch (error) {
+        console.error("Error al obtener el producto:", error);
+    }
+
+};
+
+useEffect(() => {
+    fetchProduct(id);
+}, [id]);
+
 
 const handleName = (event) => {
     setName(event.target.value);
@@ -28,6 +54,7 @@ const handleDescription = (event) => {
 const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+    const updatedAt = Date.now();
 
     if (!name || !price || !description) {
         setError("Todos los campos son obligatorios");
@@ -44,27 +71,19 @@ const handleSubmit = async (e) => {
         return;
     }
 
-
-    const newProduct = {name, price, description};  
-    
-    console.log("Producto agregado:", newProduct);;
     try {
-        await createProduct(newProduct);
-        setMessage("Producto agregado exitosamente, redirigiendo...");
-
-    setName("");
-    setPrice("");
-    setDescription("");
-    setError("");
-    setTimeout(() => {
-        setMessage("");
-        navigate("/");
-    }, 3000);
-
+        const docRef = doc(db, "products", id);
+        await updateDoc(docRef, {name, price, description, updatedAt: Date.now()});
+        setMessage("Producto editado correctamente, redirigiendo...");
+        setTimeout(() => {
+            navigate("/");
+        }, 2000); // Redirige después de 2 segundos
     } catch (error) {
-        console.error("Error al agregar el producto:", error);
-        setError("Error al agregar el producto");
-    }
+        console.error("Error al editar el producto:", error);
+        setError("Error al editar el producto");
+    }   
+
+    console.log("Producto editado!", {name, price, description});
 
 }
 
@@ -73,10 +92,10 @@ const handleSubmit = async (e) => {
         <Layout>
 
         <section id="admin-section">
-        <h1>Panel de Administración</h1>    
-        <p>Aquí puedes administrar todos tus productos. 
-        Puedes agregar, modificar o borrar lo que desees.</p>   
-        
+        <h1>Editar Producto</h1>    
+        <p>Aquí puedes actualizar tu producto. 
+        Puedes modificar nombre, precio o descripción como lo desees.</p>   
+        <p>Editando producto: {id}</p>
             <form onSubmit={handleSubmit}>
                 <label htmlFor="name">Nombre del producto:</label>
                 <input type="text" name="name" id="name" onChange={handleName} value={name}/>
@@ -87,7 +106,7 @@ const handleSubmit = async (e) => {
                 <label htmlFor="description">Descripcion del producto:</label>
                 <textarea name="description" id="description" onChange={handleDescription} value={description}></textarea>
 
-                <button>Agregar Producto</button>
+                <button>Editar Producto</button>
             
             {error && <p style={{color: "red"}}>{error}</p>}
             {message && <p style={{color:"green"}}>{message}</p>}

@@ -1,16 +1,19 @@
+import React from "react";
 import { useEffect } from "react";
 import "./Main.css";
 import { useState } from "react";
 import { db } from "../../config/firebase";
 import { collection, deleteDoc, getDocs, doc } from "firebase/firestore";
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+
 
 const Main = () => {
     const [products, setProducts] = useState([])
     const [error, setError] = useState(null)
     
     //Simulacion de usuario conectado
-    const [user, setUser] = useState(true)
+    const [user, setUser] = useState(false)
 
     const fetchingProducts = async () => {
 
@@ -58,14 +61,19 @@ const Main = () => {
                         <div className="product">
                             <h3>{producto.name}</h3>
                             <p>{producto.description}</p>
-                            <span>${producto.price}</span>
-                            <p>Producto creado: {new Date(producto.createAt).toLocaleString()}</p>
-                            {user &&                          
+                            <p>${producto.price}</p>   
+                            {user &&
+                            <> 
+                            <div>           
+                            <p>Producto creado: {new Date(producto.createdAt).toLocaleString()}</p>
+                            {producto.createdAt !== producto.updatedAt &&
+                            <p><strong>Última actualización: </strong>{new Date(producto.updatedAt).toLocaleString()}</p>}
+                            </div>                  
                             <div className="user-buttons">
-                                <button><Link to={`/editar-producto/${producto.id}`}>Editar Producto</Link></button>
+                                <Link to={`/editar-producto/${producto.id}`}><button>Editar Producto</button></Link>
                                 <button onClick={() => handleDeleteProduct(producto.id)}>Eliminar</button>
-
                             </div>
+                            </> 
                             }
                             <button>Añadir al carrito</button>
                         </div>

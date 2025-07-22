@@ -19,10 +19,10 @@ const Dashboard = () => {
     const productsRef = collection(db, "products");
 
     const createProduct = async (newProduct) => {
-        const createAt = Date.now();
+        const createdAt = Date.now();
         const updatedAt = Date.now();
         try {
-            const productRef = await addDoc(productsRef,{createAt, updatedAt, ...newProduct});
+            const productRef = await addDoc(productsRef,{createdAt, updatedAt,...newProduct});
             console.log("Producto agregado con ID:", productRef.id);
             return productRef
         }catch (error) {
@@ -61,8 +61,21 @@ const Dashboard = () => {
             return;
         }
 
-
-        console.log("Producto editado:", {name, price, description});
+        try {
+            const newProduct = {name, price, description};
+            await createProduct(newProduct);
+            setMessage("Producto agregado correctamente, redirigiendo...");
+            setName("");
+            setPrice("");
+            setDescription("");
+            setTimeout(() => {
+                navigate("/");
+            }, 2000); // Redirige después de 2 segundos
+        } catch (error) {
+            console.error("Error al agregar el producto:", error);
+            setError("Error al agregar el producto");
+        }
+        console.log("Producto agregado!", {name, price, description});
 
     }
 
