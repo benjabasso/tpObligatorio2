@@ -4,6 +4,8 @@ import { useState } from "react";
 import { signInWithEmailAndPassword} from "firebase/auth";
 import { auth } from "../config/firebase"; 
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext.jsx";
+
 
 const Login = () => {
     const [email, setEmail] = useState("");
@@ -11,6 +13,7 @@ const Login = () => {
     const [error, setError] = useState("");
     const [success, setSuccess] = useState(false);
     const navigate = useNavigate();
+    const { login } = useAuth();
 
 
     const handleEmail = (event) => {
@@ -20,7 +23,7 @@ const Login = () => {
         setPassword(event.target.value);
     }
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         setError("");
 
@@ -45,24 +48,18 @@ const Login = () => {
         console.log("Usuario Logueado:", newLogin);
 
         try {
-            signInWithEmailAndPassword(auth, email, password)
-                .then(() => {
+            await login(email, password)
                     setSuccess(true);
+                    setEmail("");
+                    setPassword("");
+                    console.log("Usuario logueado con éxito");
                     setTimeout(() => {
                         navigate("/");
                     }, 2000);
-                })
-                .catch((error) => {
-                    setError("Error al iniciar sesión: " + error.message);
-                });
         } catch (error) {
             setError("Error al iniciar sesión: " + error.message);
         }
-        
-        setEmail("");
-        setPassword("");
         setError("");
-        
     }
 
     return (

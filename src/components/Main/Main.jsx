@@ -6,14 +6,15 @@ import { db } from "../../config/firebase";
 import { collection, deleteDoc, getDocs, doc } from "firebase/firestore";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import { auth } from "../../config/firebase";
+import { useAuth } from "../../context/AuthContext";
 
 
 const Main = () => {
     const [products, setProducts] = useState([])
     const [error, setError] = useState(null)
-    
-    //Simulacion de usuario conectado
-    const [user, setUser] = useState(false)
+    const { user } = useAuth();
+
 
     const fetchingProducts = async () => {
 

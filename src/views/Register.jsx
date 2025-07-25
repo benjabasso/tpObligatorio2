@@ -3,7 +3,10 @@ import { useNavigate } from "react-router-dom";
 import Layout from "../components/Layout/Layout";
 import { useState } from "react";
 import { createUserWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../config/firebase"; 
+import { auth } from "../config/firebase";
+import { useAuth } from "../context/AuthContext";
+
+
 
 const Register = () => {
     const [name, setName] = useState("");
@@ -13,6 +16,7 @@ const Register = () => {
     const [error, setError] = useState("");
     const [success, setSuccess] = useState(false);
     const navigate = useNavigate();
+    const {register} = useAuth();
 
     const handleName = (event) => {
         setName(event.target.value);
@@ -63,7 +67,9 @@ const Register = () => {
 
         try {
 
-            await createUserWithEmailAndPassword(auth, email, password);
+        await register(email, password);
+        console.log("Usuario registrado con éxito");
+
         
         } catch (error) {
             if (error.code === "auth/email-already-in-use") {
