@@ -1,6 +1,9 @@
 import "../styles/Register.css";
+import { useNavigate } from "react-router-dom";
 import Layout from "../components/Layout/Layout";
 import { useState } from "react";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../config/firebase"; 
 
 const Register = () => {
     const [name, setName] = useState("");
@@ -8,6 +11,8 @@ const Register = () => {
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const [error, setError] = useState("");
+    const [success, setSuccess] = useState(false);
+    const navigate = useNavigate();
 
     const handleName = (event) => {
         setName(event.target.value);
@@ -22,7 +27,7 @@ const Register = () => {
         setConfirmPassword(event.target.value);
     }
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         setError("");
 
@@ -55,12 +60,33 @@ const Register = () => {
         const newRegister = {name,email, password};  
         console.log("Usuario Registrado:", newRegister);
 
+
+        try {
+
+            await createUserWithEmailAndPassword(auth, email, password);
+        
+        } catch (error) {
+            if (error.code === "auth/email-already-in-use") {
+                setError("El email ya está en uso");
+            } else if (error.code === "auth/invalid-email") {
+                setError("El email es inválido");
+            } else if (error.code === "auth/weak-password") {
+                setError("La contraseña es demasiado débil");
+            } else {
+                setError("Error al crear la cuenta: " + error.message);
+            }
+            return;
+        }
+        
+        setSuccess(true);
+        setTimeout(() => {
+            navigate("/");
+        }, 2000);
         setName("");
         setEmail("");
         setPassword("");
         setConfirmPassword("");
         setError("");
-        alert("Registro exitoso");
     }
 
     return (  
@@ -86,7 +112,7 @@ const Register = () => {
             </form>
 
             {error && <p className="error" style={{ color: "red", textAlign: "center"}}>{error}</p>}
-            
+            {success && <p className="success" style={{ color: "green", textAlign: "center"}}>Usuario registrado con éxito, redirigiendo...</p>}
         </section>
         </Layout>       
     );

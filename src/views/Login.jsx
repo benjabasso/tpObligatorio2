@@ -1,16 +1,18 @@
 import "../styles/Login.css";
 import Layout from "../components/Layout/Layout";
 import { useState } from "react";
+import { signInWithEmailAndPassword} from "firebase/auth";
+import { auth } from "../config/firebase"; 
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
-    const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
+    const [success, setSuccess] = useState(false);
+    const navigate = useNavigate();
 
-    const handleName = (event) => {
-        setName(event.target.value);
-    }
+
     const handleEmail = (event) => {
         setEmail(event.target.value);
     }
@@ -22,7 +24,7 @@ const Login = () => {
         e.preventDefault();
         setError("");
 
-        if (name === "" || email === "" || password === "") {
+        if ( email === "" || password === "") {
             setError("Todos los campos son obligatorios");
             return
         }
@@ -32,10 +34,6 @@ const Login = () => {
             return;
         }
 
-        if (name.length < 2) {
-            setError("El nombre debe tener al menos 2 caracteres");
-            return;
-        }
 
         if (password.length < 6 || !/^[a-zA-Z0-9]+$/.test(password)) {
             setError("La contraseña debe tener al menos 6 caracteres y solo contener letras y números"); 
@@ -43,14 +41,28 @@ const Login = () => {
         }
 
         
-        const newLogin = {name,email, password};  
+        const newLogin = {email, password};  
         console.log("Usuario Logueado:", newLogin);
 
-        setName("");
+        try {
+            signInWithEmailAndPassword(auth, email, password)
+                .then(() => {
+                    setSuccess(true);
+                    setTimeout(() => {
+                        navigate("/");
+                    }, 2000);
+                })
+                .catch((error) => {
+                    setError("Error al iniciar sesión: " + error.message);
+                });
+        } catch (error) {
+            setError("Error al iniciar sesión: " + error.message);
+        }
+        
         setEmail("");
         setPassword("");
         setError("");
-        alert("Login exitoso");
+        
     }
 
     return (
@@ -61,8 +73,6 @@ const Login = () => {
         <h1>Login</h1>    
 
             <form onSubmit={handleSubmit}>
-                <label htmlFor="name">Nombre:</label>
-                <input type="text" name="name" id="name" placeholder="Ingresá tu nombre" onChange={handleName} value={name}/>
 
                 <label htmlFor="email">Email:</label>
                 <input type="email" name="email" id="email" placeholder="Ingresá tu email" onChange={handleEmail} value={email}/>
@@ -74,6 +84,7 @@ const Login = () => {
 
             </form>
             {error && <p className="error" style={{ color: "red", textAlign: "center" }}>{error}</p>}
+            {success && <p className="success" style={{ color: "green", textAlign: "center" }}>Usuario logueado con éxito, redirigiendo...</p>}
         </section>
 
         </Layout>
