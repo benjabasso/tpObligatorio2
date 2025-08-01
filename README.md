@@ -51,13 +51,14 @@ src/
 ### 1. Clonar el repositorio
 
 ```bash
-git clone https://github.com/tu-usuario/tu-repo.git
+git clone https://github.com/tu-usuario/tpObligatorio2
+
 ```
 
 ### 2. Ingresar al directorio del proyecto
 
 ```bash
-cd nombre-del-repositorio
+cd tpObligatorio2
 ```
 
 ### 3. Instalar dependencias
