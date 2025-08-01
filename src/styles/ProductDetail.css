@@ -1,0 +1,119 @@
+#product-detail {
+    background-color: #a139b3;
+    color: #fff;
+    max-width: 600px;
+    margin: 4rem auto;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+#product-detail h1 {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+}
+
+#product-detail p {
+    margin: 0.5rem 0;
+}
+
+#product-detail strong {
+    font-weight: bold;
+    color: #000;
+}
+
+.buy-button,
+.edit-button,
+.back-button {
+    padding: 0.6rem 1.4rem;
+    font-size: 1rem;
+    font-weight: 600;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    display: inline-block;
+    min-width: 130px; /* 🔑 Para igualar visualmente todos */
+    text-align: center;
+    margin: 4px;
+}
+
+.buy-button {
+    background-color: #00e5ff;
+    color: #000;
+}
+
+.edit-button {
+    background-color: #ffcd00;
+    color: #000;
+    text-decoration: none;
+}
+
+.buy-button:hover {
+    background-color: #00c3d9;
+}
+
+.edit-button:hover {
+    background-color: #e6ba00;
+}
+
+.product-detail-container {
+    background-color: #1e1e1e;
+    min-height: 100vh;
+    padding: 2rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    }
+
+.product-card {
+    background-color: #9c27b0;
+    border-radius: 12px;
+    padding: 2rem;
+    width: 90%;
+    max-width: 600px;
+    color: white;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    }
+
+.product-card h1 {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    color: #fff;
+    }
+
+.price {
+    font-size: 1.5rem;
+    color: #00f7ff;
+    margin: 0.5rem 0;
+    }
+
+.product-card p {
+    margin: 0.5rem 0;
+    font-size: 1rem;
+    }
+
+.back-button {
+    margin-top: 2rem;
+    display: inline-block;
+    background-color: #00f7ff;
+    color: black;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: 0.2s ease-in-out;
+    }
+
+.back-button:hover {
+    background-color: #00c2cc;
+    }
+
+.error, .loading {
+    color: white;
+    text-align: center;
+    margin-top: 2rem;
+    }

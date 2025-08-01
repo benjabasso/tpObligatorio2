@@ -4,7 +4,7 @@ import Layout from '../components/Layout/Layout';
 import { Link, useParams } from 'react-router-dom';
 import { db } from '../config/firebase';
 import { useNavigate, Navigate } from 'react-router-dom';
-import { doc, getDoc, updateDoc } from "firebase/firestore";
+import { doc, getDoc, updateDoc, query, where, getDocs } from "firebase/firestore";
 
 
 
@@ -13,10 +13,19 @@ const EditProduct = () => {
 const [name, setName] = useState("");
 const [price, setPrice] = useState("");
 const [description, setDescription] = useState("");
+const [sku, setSku] = useState("");
 const [error, setError] = useState("");
 const [message, setMessage] = useState("");
 const navigate = useNavigate();
 const { id } = useParams();
+const productsRef = collection(db, "products");
+
+const checkIfSkuExistsForOtherProduct = async (skuToCheck, currentProductId) => {
+    const q = query(productsRef, where("sku", "==", skuToCheck));
+    const snapshot = await getDocs(q);
+    return snapshot.docs.some(doc => doc.id !== currentProductId);
+};
+
 
 //Traer producto de la base de datos
 const fetchProduct = async (id) => {
@@ -28,6 +37,7 @@ const fetchProduct = async (id) => {
             setName(productData.name);
             setPrice(productData.price);
             setDescription(productData.description);
+            setSku(productData.sku);
         }
     } catch (error) {
         console.error("Error al obtener el producto:", error);
@@ -49,6 +59,9 @@ const handlePrice = (event) => {
 const handleDescription = (event) => {
     setDescription(event.target.value);
 }
+const handleSku = (event) => {
+    setSku(event.target.value);
+}
 
 
 const handleSubmit = async (e) => {
@@ -56,7 +69,7 @@ const handleSubmit = async (e) => {
     setError("");
     const updatedAt = Date.now();
 
-    if (!name || !price || !description) {
+    if (!name || !price || !description || !sku) {
         setError("Todos los campos son obligatorios");
         return
     }
@@ -71,9 +84,20 @@ const handleSubmit = async (e) => {
         return;
     }
 
+    if (sku.length < 3) {
+        setError("El SKU debe tener al menos 3 caracteres");
+        return;
+    }
+
+    const skuExists = await checkIfSkuExistsForOtherProduct(sku, id);
+    if (skuExists) {
+        setError("El SKU ya existe, por favor elige otro");
+        return;
+    }
+
     try {
         const docRef = doc(db, "products", id);
-        await updateDoc(docRef, {name, price, description, updatedAt: Date.now()});
+        await updateDoc(docRef, {name, price, description, sku, updatedAt: Date.now()});
         setMessage("Producto editado correctamente, redirigiendo...");
         setTimeout(() => {
             navigate("/");
@@ -83,7 +107,7 @@ const handleSubmit = async (e) => {
         setError("Error al editar el producto");
     }   
 
-    console.log("Producto editado!", {name, price, description});
+    console.log("Producto editado!", {name, price, description, sku, updatedAt});
 
 }
 
@@ -106,6 +130,9 @@ const handleSubmit = async (e) => {
                 <label htmlFor="description">Descripcion del producto:</label>
                 <textarea name="description" id="description" onChange={handleDescription} value={description}></textarea>
 
+                <label htmlFor="sku">SKU del producto:</label>
+                <input type="text" name="sku" id="sku" onChange={handleSku} value={sku}/>
+                
                 <button>Editar Producto</button>
             
             {error && <p style={{color: "red"}}>{error}</p>}

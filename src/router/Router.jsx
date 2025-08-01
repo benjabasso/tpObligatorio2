@@ -5,6 +5,7 @@ import Login from "../views/Login"
 import Register from "../views/Register"
 import NotFound from "../views/NotFound"
 import EditProduct from "../views/EditProduct"
+import ProductDetail from "../views/ProductDetail"
 
 const Router = () => {
     return (
@@ -15,6 +16,7 @@ const Router = () => {
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
                 <Route path="/editar-producto/:id" element={<EditProduct/>} />
+                <Route path="/product/:id" element={<ProductDetail />} />
                 <Route path="*" element={<NotFound />} />
             </Routes>
         </BrowserRouter>

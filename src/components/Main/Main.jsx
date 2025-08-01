@@ -10,6 +10,7 @@ import { auth } from "../../config/firebase";
 import { useAuth } from "../../context/AuthContext";
 
 
+
 const Main = () => {
     const [products, setProducts] = useState([])
     const [error, setError] = useState(null)
@@ -63,6 +64,7 @@ const Main = () => {
                             <h3>{producto.name}</h3>
                             <p>{producto.description}</p>
                             <p>${producto.price}</p>   
+                            <p>SKU: {producto.sku}</p>
                             {user &&
                             <> 
                             <div>           
@@ -76,7 +78,7 @@ const Main = () => {
                             </div>
                             </> 
                             }
-                            <button>Añadir al carrito</button>
+                            <Link to={`/product/${producto.id}`}><button>Ver Detalle</button></Link>
                         </div>
 
                     )
